@@ -1,0 +1,1 @@
+-- Snapshot optionnel : non utilisé directement (les migrations font foi).

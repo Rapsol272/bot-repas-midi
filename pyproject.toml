@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "repas-bot"
+version = "0.1.0"
+description = "Bot Discord - Repas du midi (menu, participation, cagnote, invités, notes plats)"
+requires-python = ">=3.10"
+dependencies = [
+  "discord.py>=2.4.0",
+  "aiosqlite>=0.20.0",
+  "python-dotenv>=1.0.1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
