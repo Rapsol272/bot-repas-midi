@@ -5,7 +5,7 @@ from discord.ext import commands
 from dotenv import load_dotenv
 
 from repas_bot.config import load_settings
-from repas_bot.logging import setup_logging
+from repas_bot.logging_setup import setup_logging
 from repas_bot.db.connection import create_connection
 from repas_bot.db.migrations import apply_migrations
 
