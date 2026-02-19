@@ -33,7 +33,6 @@ async def run() -> None:
     bot = commands.Bot(command_prefix="!", intents=intents)
     bot.settings = settings  # pour debug
 
-
     @bot.event
     async def on_ready():
         log.info("Logged in as %s", bot.user)
