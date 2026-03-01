@@ -40,3 +40,30 @@ class LedgerRepo:
         """, (guild_id, user_id))
         row = await cur.fetchone()
         return int(row[0] or 0)
+
+    async def balances_by_user(self, guild_id: int):
+        cur = await self.db.execute("""
+        SELECT
+          user_id,
+          COALESCE(SUM(CASE WHEN entry_type='DEBIT' THEN amount_cents ELSE 0 END),0) -
+          COALESCE(SUM(CASE WHEN entry_type='CREDIT' THEN amount_cents ELSE 0 END),0) +
+          COALESCE(SUM(CASE WHEN entry_type='ADJUST' THEN amount_cents ELSE 0 END),0) AS balance_cents
+        FROM ledger_entries
+        WHERE guild_id=? AND status='POSTED'
+        GROUP BY user_id
+        HAVING balance_cents != 0
+        ORDER BY balance_cents DESC, user_id ASC
+        """, (guild_id,))
+        return await cur.fetchall()
+
+    async def global_balance_cents(self, guild_id: int) -> int:
+        cur = await self.db.execute("""
+        SELECT
+          COALESCE(SUM(CASE WHEN entry_type='DEBIT' THEN amount_cents ELSE 0 END),0) -
+          COALESCE(SUM(CASE WHEN entry_type='CREDIT' THEN amount_cents ELSE 0 END),0) +
+          COALESCE(SUM(CASE WHEN entry_type='ADJUST' THEN amount_cents ELSE 0 END),0)
+        FROM ledger_entries
+        WHERE guild_id=? AND status='POSTED'
+        """, (guild_id,))
+        row = await cur.fetchone()
+        return int(row[0] or 0)

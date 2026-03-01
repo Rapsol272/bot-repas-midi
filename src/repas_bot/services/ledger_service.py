@@ -23,3 +23,10 @@ class LedgerService:
     async def balance_str(self, guild_id: int, user_id: int) -> str:
         cents = await self.repo.balance_cents(guild_id, user_id)
         return cents_to_euros_str(cents)
+
+    async def balances_by_user(self, guild_id: int):
+        return await self.repo.balances_by_user(guild_id)
+
+    async def global_balance_str(self, guild_id: int) -> str:
+        cents = await self.repo.global_balance_cents(guild_id)
+        return cents_to_euros_str(cents)

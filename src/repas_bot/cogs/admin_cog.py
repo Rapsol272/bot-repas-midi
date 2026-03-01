@@ -28,6 +28,36 @@ class AdminCog(commands.Cog):
                          for eid, uid, amt, note, created_at in rows[:50]])
         await interaction.response.send_message(txt, ephemeral=True)
 
+
+    @app_commands.command(name="admin_recap_soldes", description="Récapitulatif des dettes + solde global (admin)")
+    async def admin_recap_soldes(self, interaction: discord.Interaction):
+        if not self._check_admin(interaction):
+            return await interaction.response.send_message("Droits insuffisants.", ephemeral=True)
+
+        svc = LedgerService(self.db)
+        rows = await svc.balances_by_user(interaction.guild_id)
+        global_balance = await svc.global_balance_str(interaction.guild_id)
+
+        if not rows:
+            return await interaction.response.send_message(
+                f"Aucun solde enregistré. Solde global : **{global_balance}**",
+                ephemeral=True,
+            )
+
+        lines = []
+        for user_id, balance_cents in rows:
+            balance_eur = balance_cents / 100
+            lines.append(f"- <@{user_id}> (`{user_id}`) : **{balance_eur:.2f} €**")
+
+        recap = "\n".join(lines[:50])
+        if len(lines) > 50:
+            recap += f"\n... et {len(lines) - 50} autre(s) compte(s)."
+
+        await interaction.response.send_message(
+            f"**Récap des soldes (positif = doit payer)**\n{recap}\n\n**Solde global** : **{global_balance}**",
+            ephemeral=True,
+        )
+
     @app_commands.command(name="admin_approve", description="Valide un remboursement (admin)")
     async def admin_approve(self, interaction: discord.Interaction, entry_id: int):
         if not self._check_admin(interaction):
