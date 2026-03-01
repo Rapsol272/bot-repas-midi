@@ -17,6 +17,7 @@ from repas_bot.cogs.invites_cog import InvitesCog
 from repas_bot.cogs.plats_cog import PlatsCog
 from repas_bot.cogs.admin_cog import AdminCog
 from repas_bot.cogs.health_cog import HealthCog
+from repas_bot.cogs.poll_cog import PollCog
 
 
 log = logging.getLogger("repas_bot")
@@ -60,5 +61,6 @@ async def run() -> None:
         await bot.add_cog(InvitesCog(bot, db, settings))
         await bot.add_cog(PlatsCog(bot, db, settings))
         await bot.add_cog(AdminCog(bot, db, settings))
+        await bot.add_cog(PollCog(bot, db, settings))
 
         await bot.start(settings.discord_token)
