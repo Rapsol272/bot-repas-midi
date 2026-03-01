@@ -11,7 +11,6 @@ from repas_bot.permissions import has_admin_rights
 from repas_bot.ui.views import MealParticipationView
 
 
-
 class MenuCog(commands.Cog):
     def __init__(self, bot: commands.Bot, db, settings):
         self.bot = bot
@@ -44,13 +43,10 @@ class MenuCog(commands.Cog):
             interaction.guild_id, meal_date, titre, description, price_cents, interaction.user.id
         )
 
-               # Embed (réutilise ton embed actuel)
         e = menu_embed(meal_date, titre, description, price_cents, "OPEN")
 
-        # Message admin (ephemeral)
         await interaction.response.send_message(f"Menu enregistré (meal_id={meal_id}).", embed=e, ephemeral=True)
 
-        # Détermine le salon d’annonce
         menu_channel_id = None
         if cfg:
             menu_channel_id = cfg[4]  # menu_channel_id
@@ -61,13 +57,10 @@ class MenuCog(commands.Cog):
             if isinstance(ch, discord.TextChannel):
                 channel = ch
 
-        # View boutons
         view = MealParticipationView(self.db, interaction.guild_id, meal_id, price_cents, timeout=None)
 
-        # Ping @everyone (nécessite que le bot ait le droit de mentionner everyone)
         allowed = discord.AllowedMentions(everyone=True)
         await channel.send(content="@everyone 🍽️ **Nouveau menu du jour !**", embed=e, view=view, allowed_mentions=allowed)
-
 
     @app_commands.command(name="menu_show", description="Affiche le menu du jour")
     async def menu_show(self, interaction: discord.Interaction, date: str | None = None):
@@ -83,6 +76,7 @@ class MenuCog(commands.Cog):
         meal_id, meal_date, title, desc, price_cents, status = row
         e = menu_embed(meal_date, title, desc, price_cents, status)
         await interaction.response.send_message(embed=e, ephemeral=True)
+
 
 async def setup(bot: commands.Bot):
     pass

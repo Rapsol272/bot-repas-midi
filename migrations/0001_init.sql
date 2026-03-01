@@ -11,7 +11,8 @@ CREATE TABLE IF NOT EXISTS guild_config (
   admin_role_name TEXT NOT NULL DEFAULT 'Chef',
   timezone TEXT NOT NULL DEFAULT 'Europe/Paris',
   default_meal_price_cents INTEGER NOT NULL DEFAULT 500,
-  menu_channel_id INTEGER NULL
+  menu_channel_id INTEGER NULL,
+  poll_channel_id INTEGER NULL
 );
 
 -- Repas (menu du jour)

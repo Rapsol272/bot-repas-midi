@@ -11,5 +11,8 @@ class ConfigService:
     async def set_menu_channel(self, guild_id: int, channel_id: int):
         await self.repo.set_menu_channel(guild_id, channel_id)
 
+    async def set_poll_channel(self, guild_id: int, channel_id: int):
+        await self.repo.set_poll_channel(guild_id, channel_id)
+
     async def get(self, guild_id: int):
         return await self.repo.get(guild_id)
