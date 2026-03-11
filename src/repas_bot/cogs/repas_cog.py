@@ -53,5 +53,29 @@ class RepasCog(commands.Cog):
         await part.leave(meal_id, interaction.user.id)
         await interaction.response.send_message("Ok, noté (NO).", ephemeral=True)
 
+    @app_commands.command(name="repas_participants", description="Affiche les participants d'un repas")
+    @app_commands.describe(date="Date du repas au format YYYY-MM-DD (défaut: aujourd'hui)")
+    async def repas_participants(self, interaction: discord.Interaction, date: str | None = None):
+        if not interaction.guild:
+            return await interaction.response.send_message("Commande serveur uniquement.", ephemeral=True)
+
+        meal_date, row = await self._get_today_meal(interaction.guild_id, date)
+        if not row:
+            return await interaction.response.send_message(f"Aucun menu pour {meal_date}.", ephemeral=True)
+
+        meal_id = int(row[0])
+        participants_ids = await ParticipationService(self.db).list_yes(meal_id)
+
+        if not participants_ids:
+            return await interaction.response.send_message(f"Aucun participant pour le repas du {meal_date}.", ephemeral=True)
+
+        lines = []
+        for user_id in participants_ids:
+            member = interaction.guild.get_member(int(user_id))
+            lines.append(member.mention if member else f"<@{user_id}>")
+
+        txt = f"Participants pour le repas du {meal_date} :\n" + "\n".join(f"- {line}" for line in lines)
+        await interaction.response.send_message(txt, ephemeral=True)
+
 async def setup(bot: commands.Bot):
     pass
